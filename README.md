@@ -27,3 +27,10 @@ The one trade-off worth stating: `added` and `removed` keep whole subtree values
 When a key's value changes *type* — a dict turning into a string, or vice versa — the whole key is reported as one `changed` entry with `(before, after)` as the two raw values, rather than recursing into a dict that no longer exists. Lists are also treated as opaque leaves: `[1, 2, 3]` vs `[1, 2, 4]` is a single change, not an element-wise diff.
 
 Run the tests with `PYTHONPATH=src python -m unittest discover -s tests`.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
